@@ -4,8 +4,10 @@ import jwt from 'jsonwebtoken';
 
 import UserModel from '../models/user';
 import StatusCode from '../constants/status-codes';
-import HttpError from '../errors/http-error';
 import { ACCESS_TOKEN } from '../config';
+import BadRequestError from '../errors/bad-requrst';
+import NotFoundError from '../errors/not-found';
+import ConflictError from '../errors/conflict';
 
 // Получение всех пользователей
 export const getAllUsers = async (
@@ -43,16 +45,14 @@ export const createUser = async (
   } catch (err: any) {
     if (err.name === 'ValidationError') {
       next(
-        new HttpError(
+        new BadRequestError(
           'Переданы некорректные данные при создании пользователя',
-          StatusCode.BAD_REQUEST,
         ),
       );
     } else if (err.code === 11000) {
       next(
-        new HttpError(
+        new ConflictError(
           'Пользователь с таким email уже существует',
-          StatusCode.CONFLICT,
         ),
       );
     } else {
@@ -73,9 +73,8 @@ export const getUserById = async (
     const user = await UserModel.findById(userId);
 
     if (!user) {
-      throw new HttpError(
+      throw new NotFoundError(
         'Пользователь с указанным ID не найден',
-        StatusCode.NOT_FOUND,
       );
     }
 
@@ -83,9 +82,8 @@ export const getUserById = async (
   } catch (err: any) {
     if (err.name === 'CastError') {
       next(
-        new HttpError(
+        new BadRequestError(
           'Передан некорректный ID пользователя',
-          StatusCode.BAD_REQUEST,
         ),
       );
     } else {
@@ -110,9 +108,8 @@ export const updateUser = async (
     );
 
     if (!user) {
-      throw new HttpError(
+      throw new NotFoundError(
         'Пользователь с указанным ID не найден',
-        StatusCode.NOT_FOUND,
       );
     }
 
@@ -120,9 +117,8 @@ export const updateUser = async (
   } catch (err: any) {
     if (err.name === 'ValidationError') {
       next(
-        new HttpError(
+        new BadRequestError(
           'Переданы некорректные данные при обновлении пользователя',
-          StatusCode.BAD_REQUEST,
         ),
       );
     } else {
@@ -146,9 +142,8 @@ export const updateUserAvatar = async (
     );
 
     if (!user) {
-      throw new HttpError(
+      throw new NotFoundError(
         'Пользователь с указанным ID не найден',
-        StatusCode.NOT_FOUND,
       );
     }
 
@@ -156,9 +151,8 @@ export const updateUserAvatar = async (
   } catch (err: any) {
     if (err.name === 'ValidationError') {
       next(
-        new HttpError(
+        new BadRequestError(
           'Переданы некорректные данные при обновлении аватара',
-          StatusCode.BAD_REQUEST,
         ),
       );
     } else {

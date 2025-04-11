@@ -1,6 +1,6 @@
 import { celebrate, Joi, Segments } from 'celebrate';
 
-import { URL_REGEX } from '../constants/validation';
+import URL_REGEX from '../constants/validation';
 
 // Валидация для создания пользователя
 export const validateCreateUser = celebrate({

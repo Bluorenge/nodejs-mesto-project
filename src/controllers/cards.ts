@@ -2,7 +2,9 @@ import { NextFunction, Request, Response } from 'express';
 
 import CardModel from '../models/card';
 import StatusCode from '../constants/status-codes';
-import HttpError from '../errors/http-error';
+import BadRequestError from '../errors/bad-requrst';
+import NotFoundError from '../errors/not-found';
+import ForbiddenError from '../errors/forbidden';
 
 // Получение всех карточек
 export const getCards = async (
@@ -35,9 +37,8 @@ export const createCard = async (
   } catch (err: any) {
     if (err.name === 'ValidationError') {
       next(
-        new HttpError(
+        new BadRequestError(
           'Переданы некорректные данные при создании карточки',
-          StatusCode.BAD_REQUEST,
         ),
       );
     } else {
@@ -59,17 +60,15 @@ export const deleteCard = async (
     const card = await CardModel.findById(cardId);
 
     if (!card) {
-      throw new HttpError(
+      throw new NotFoundError(
         'Карточка с указанным ID не найдена',
-        StatusCode.NOT_FOUND,
       );
     }
 
     // Проверяем, является ли текущий пользователь владельцем карточки
     if (card.owner.toString() !== userId) {
-      throw new HttpError(
+      throw new ForbiddenError(
         'Вы не можете удалить чужую карточку',
-        StatusCode.FORBIDDEN,
       );
     }
 
@@ -81,9 +80,8 @@ export const deleteCard = async (
   } catch (err: any) {
     if (err.name === 'CastError') {
       next(
-        new HttpError(
+        new BadRequestError(
           'Передан некорректный ID карточки',
-          StatusCode.BAD_REQUEST,
         ),
       );
     } else {
@@ -108,9 +106,8 @@ export const setCardLike = async (
     );
 
     if (!card) {
-      throw new HttpError(
+      throw new NotFoundError(
         'Карточка с указанным ID не найдена',
-        StatusCode.NOT_FOUND,
       );
     }
 
@@ -118,9 +115,8 @@ export const setCardLike = async (
   } catch (err: any) {
     if (err.name === 'CastError') {
       next(
-        new HttpError(
+        new BadRequestError(
           'Передан некорректный ID карточки',
-          StatusCode.BAD_REQUEST,
         ),
       );
     } else {
@@ -145,9 +141,8 @@ export const deleteCardLike = async (
     );
 
     if (!card) {
-      throw new HttpError(
+      throw new NotFoundError(
         'Карточка с указанным ID не найдена',
-        StatusCode.NOT_FOUND,
       );
     }
 
@@ -155,9 +150,8 @@ export const deleteCardLike = async (
   } catch (err: any) {
     if (err.name === 'CastError') {
       next(
-        new HttpError(
+        new BadRequestError(
           'Передан некорректный ID карточки',
-          StatusCode.BAD_REQUEST,
         ),
       );
     } else {

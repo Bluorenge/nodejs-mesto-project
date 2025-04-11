@@ -3,8 +3,7 @@ import jwt, { JwtPayload } from 'jsonwebtoken';
 
 import { ACCESS_TOKEN } from '../config';
 import '../types/express';
-import HttpError from '../errors/http-error';
-import StatusCode from '../constants/status-codes';
+import UnauthorizedError from '../errors/unauthorized';
 
 export default function auth(req: Request, res: Response, next: NextFunction) {
   let payload: JwtPayload | null = null;
@@ -13,7 +12,7 @@ export default function auth(req: Request, res: Response, next: NextFunction) {
     const { authorization } = req.headers;
 
     if (!authorization?.startsWith('Bearer ')) {
-      throw new HttpError('Невалидный токен', StatusCode.UNAUTHORIZED);
+      throw new UnauthorizedError('Невалидный токен');
     }
 
     const accessToken = authorization.replace('Bearer ', '');
@@ -24,9 +23,9 @@ export default function auth(req: Request, res: Response, next: NextFunction) {
     next();
   } catch (error) {
     if (error instanceof Error && error.name === 'TokenExpiredError') {
-      next(new HttpError('Истек срок действия токена', StatusCode.UNAUTHORIZED));
+      next(new UnauthorizedError('Истек срок действия токена'));
     } else {
-      next(new HttpError('Необходима авторизация', StatusCode.UNAUTHORIZED));
+      next(new UnauthorizedError('Необходима авторизация'));
     }
   }
 }

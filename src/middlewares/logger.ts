@@ -12,7 +12,7 @@ const requestTransport = new winston.transports.DailyRotateFile({
 
 export const requestLogger = expressWinston.logger({
   transports: [
-    requestTransport
+    requestTransport,
   ],
   format: winston.format.json(),
 });
