@@ -1,6 +1,7 @@
 import express from 'express';
 
 import mongoose from 'mongoose';
+import { errors } from 'celebrate';
 
 import routes from './routes';
 import errorHandler from './middlewares/error-handler';
@@ -22,6 +23,7 @@ app.use(requestLogger);
 app.use('/', routes);
 
 app.use(errorLogger);
+app.use(errors());
 app.use(errorHandler);
 
 app.listen(PORT, () => {

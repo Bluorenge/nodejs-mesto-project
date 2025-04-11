@@ -5,6 +5,7 @@ import jwt from 'jsonwebtoken';
 import UserModel from '../models/user';
 import StatusCode from '../constants/status-codes';
 import HttpError from '../errors/http-error';
+import { ACCESS_TOKEN } from '../config';
 
 // Получение всех пользователей
 export const getAllUsers = async (
@@ -176,7 +177,7 @@ export const login = async (
 
     const user = await UserModel.findUserByCredentials(email, password);
 
-    const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
+    const token = jwt.sign({ _id: user._id }, ACCESS_TOKEN.secret, { expiresIn: '7d' });
 
     res.status(StatusCode.OK).send({ token });
   } catch (err: any) {
