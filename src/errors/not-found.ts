@@ -5,7 +5,7 @@ class NotFoundError extends Error {
 
   constructor(message: string) {
     super(message);
-    this.statusCode = StatusCode.BAD_REQUEST;
+    this.statusCode = StatusCode.NOT_FOUND;
     this.name = 'NotFoundError';
   }
 }

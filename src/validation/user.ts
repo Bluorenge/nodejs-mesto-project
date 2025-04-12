@@ -9,7 +9,7 @@ export const validateCreateUser = celebrate({
     about: Joi.string().min(2).max(200),
     avatar: Joi.string().pattern(URL_REGEX),
     email: Joi.string().required().email(),
-    password: Joi.string().required().min(8),
+    password: Joi.string().required(),
   }),
 });
 

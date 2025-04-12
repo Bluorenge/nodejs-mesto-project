@@ -5,7 +5,7 @@ class ForbiddenError extends Error {
 
   constructor(message: string) {
     super(message);
-    this.statusCode = StatusCode.BAD_REQUEST;
+    this.statusCode = StatusCode.FORBIDDEN;
     this.name = 'ForbiddenError';
   }
 }

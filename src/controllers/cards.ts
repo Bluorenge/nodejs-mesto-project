@@ -57,13 +57,11 @@ export const deleteCard = async (
     const { cardId } = req.params;
     const userId = req.user!._id;
 
-    const card = await CardModel.findById(cardId);
-
-    if (!card) {
-      throw new NotFoundError(
+    const card = await CardModel.findById(cardId).orFail(
+      new NotFoundError(
         'Карточка с указанным ID не найдена',
-      );
-    }
+      ),
+    );
 
     // Проверяем, является ли текущий пользователь владельцем карточки
     if (card.owner.toString() !== userId) {
@@ -103,13 +101,7 @@ export const setCardLike = async (
       cardId,
       { $addToSet: { likes: userId } },
       { new: true },
-    );
-
-    if (!card) {
-      throw new NotFoundError(
-        'Карточка с указанным ID не найдена',
-      );
-    }
+    ).orFail(new NotFoundError('Карточка с указанным ID не найдена'));
 
     res.status(StatusCode.OK).send(card);
   } catch (err: any) {
@@ -138,13 +130,7 @@ export const deleteCardLike = async (
       cardId,
       { $pull: { likes: userId } },
       { new: true },
-    );
-
-    if (!card) {
-      throw new NotFoundError(
-        'Карточка с указанным ID не найдена',
-      );
-    }
+    ).orFail(new NotFoundError('Карточка с указанным ID не найдена'));
 
     res.status(StatusCode.OK).send(card);
   } catch (err: any) {

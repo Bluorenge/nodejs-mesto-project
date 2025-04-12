@@ -70,13 +70,39 @@ export const getUserById = async (
   try {
     const { userId } = req.params;
 
-    const user = await UserModel.findById(userId);
-
-    if (!user) {
-      throw new NotFoundError(
+    const user = await UserModel.findById(userId).orFail(
+      new NotFoundError(
         'Пользователь с указанным ID не найден',
+      ),
+    );
+
+    res.status(StatusCode.OK).send(user);
+  } catch (err: any) {
+    if (err.name === 'CastError') {
+      next(
+        new BadRequestError(
+          'Передан некорректный ID пользователя',
+        ),
       );
+    } else {
+      next(err);
     }
+  }
+};
+
+export const getUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
+  try {
+    const { userId } = req.user!._id;
+
+    const user = await UserModel.findById(userId).orFail(
+      new NotFoundError(
+        'Пользователь с указанным ID не найден',
+      ),
+    );
 
     res.status(StatusCode.OK).send(user);
   } catch (err: any) {
@@ -105,13 +131,7 @@ export const updateUser = async (
       userId,
       { name, about },
       { new: true, runValidators: true },
-    );
-
-    if (!user) {
-      throw new NotFoundError(
-        'Пользователь с указанным ID не найден',
-      );
-    }
+    ).orFail(new NotFoundError('Пользователь с указанным ID не найден'));
 
     res.status(StatusCode.OK).send(user);
   } catch (err: any) {
@@ -139,13 +159,7 @@ export const updateUserAvatar = async (
       req.user?._id,
       { avatar },
       { new: true, runValidators: true },
-    );
-
-    if (!user) {
-      throw new NotFoundError(
-        'Пользователь с указанным ID не найден',
-      );
-    }
+    ).orFail(new NotFoundError('Пользователь с указанным ID не найден'));
 
     res.status(StatusCode.OK).send(user);
   } catch (err: any) {

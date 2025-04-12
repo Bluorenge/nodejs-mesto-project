@@ -22,7 +22,7 @@ const cardSchema = new Schema<ICard>({
     type: String,
     required: [true, 'Поле "link" должно быть заполнено'],
     validate: {
-      validator: (v) => validator.isURL(v),
+      validator: (v: string) => validator.isURL(v),
       message: 'Некорректный URL',
     },
   },
